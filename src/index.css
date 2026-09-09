@@ -1,0 +1,193 @@
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap");
+
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #030014;
+
+  --color-light-100: #cecefb;
+  --color-light-200: #a8b5db;
+
+  --color-gray-100: #9ca4ab;
+
+  --color-dark-100: #0f0d23;
+
+  --font-dm-sans: DM Sans, sans-serif;
+
+  --breakpoint-xs: 480px;
+
+  --background-image-hero-pattern: url("/hero-bg.png");
+}
+
+@layer base {
+  body {
+    font-family: "DM Sans", serif;
+    font-optical-sizing: auto;
+    background: #030014;
+    overflow-x: hidden;
+  }
+
+  h1 {
+    @apply mx-auto max-w-4xl text-center text-5xl font-bold leading-tight tracking-[-1%] text-white sm:text-[64px] sm:leading-[76px];
+  }
+
+  h2 {
+    @apply text-2xl font-bold text-white sm:text-3xl;
+  }
+
+  main {
+    @apply min-h-screen relative bg-primary;
+  }
+
+}
+
+@layer components {
+  .pattern {
+    @apply bg-hero-pattern w-full h-screen bg-center bg-cover absolute z-0;
+  }
+
+  .wrapper {
+    @apply px-5 py-12 xs:p-10 max-w-7xl mx-auto flex flex-col relative z-10;
+  }
+
+  .hero-header { @apply mt-2 sm:mt-6; }
+  .topbar { @apply flex items-center justify-between gap-4; }
+  .topbar .logo { @apply w-36 sm:w-44 drop-shadow-lg; }
+  .live-status { @apply flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-2 text-[10px] font-bold uppercase tracking-[0.18em] text-light-200 sm:px-4 sm:text-xs; }
+  .live-status i { @apply h-2 w-2 rounded-full bg-[#ffb86c] shadow-[0_0_12px_#ffb86c]; animation: pulse-dot 1.8s ease-in-out infinite; }
+  .hero-copy { @apply relative mt-12 grid items-center gap-10 lg:mt-16 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16; }
+  .hero-art { @apply relative mx-auto aspect-[0.8] w-full max-w-[360px] rotate-[-4deg] sm:max-w-[430px] lg:order-2; animation: float-art 7s ease-in-out infinite; }
+  .hero-art::after { content: ""; @apply absolute -bottom-5 left-1/2 h-8 w-3/4 -translate-x-1/2 rounded-[50%] bg-black/50 blur-xl; }
+  .hero-art-glow { @apply absolute -inset-8 rounded-[3rem] bg-[#ff8a5b]/20 blur-3xl; }
+  .hero-art img { @apply relative h-full w-full rounded-[2rem] object-cover shadow-[18px_24px_0_rgba(171,139,255,0.2),0_25px_80px_rgba(0,0,0,0.55)]; }
+  .hero-stamp { @apply absolute -right-5 top-8 flex h-20 w-20 rotate-[12deg] items-center justify-center rounded-full border border-white/50 bg-[#ffb86c] text-center text-[11px] font-black leading-[0.9] tracking-wider text-[#27142c] shadow-lg sm:-right-8 sm:h-24 sm:w-24 sm:text-xs; }
+  .hero-caption { @apply absolute -bottom-4 -left-5 rotate-[-8deg] rounded-md bg-[#d6c7ff] px-3 py-2 font-[Bebas_Neue] text-lg leading-[0.9] tracking-wide text-[#211735] shadow-lg sm:-left-10 sm:text-xl; }
+  .hero-message { @apply lg:order-1; }
+  .eyebrow { @apply mb-5 text-xs font-bold uppercase tracking-[0.22em] text-[#ffb86c] sm:text-sm; }
+  .hero-message h1 { @apply mx-0 max-w-3xl text-left text-5xl font-black leading-[0.95] tracking-[-0.04em] sm:text-7xl sm:leading-[0.92]; }
+  .hero-description { @apply mt-6 max-w-lg text-base leading-7 text-light-200 sm:text-lg; }
+  .hero-message .search { @apply mx-0 mt-8 max-w-xl border border-white/10 bg-white/10 p-2 pl-4 shadow-[0_14px_40px_rgba(0,0,0,0.25)] backdrop-blur-md transition-colors focus-within:border-[#ffb86c]/70; }
+  .hero-message .search input { @apply py-3; }
+  .hero-meta { @apply mt-5 flex flex-wrap gap-x-6 gap-y-2 text-xs font-medium uppercase tracking-wider text-white/45; }
+  .hero-meta b { @apply mr-2 text-[#ffb86c]; }
+
+  .trending {
+    @apply mt-20;
+
+    & ul {
+      @apply flex flex-row overflow-y-auto gap-5 -mt-10 w-full hide-scrollbar;
+    }
+
+    & ul li {
+      @apply min-w-[230px] flex flex-row items-center;
+    }
+
+    & ul li p {
+      @apply fancy-text mt-[22px] text-nowrap;
+    }
+
+    & ul li img {
+      @apply w-[127px] h-[163px] rounded-lg object-cover -ml-3.5;
+    }
+  }
+
+  .search {
+    @apply w-full bg-light-100/5 px-4 py-3 rounded-lg mt-10 max-w-3xl mx-auto;
+
+    & div {
+      @apply relative flex items-center;
+    }
+
+    & img {
+      @apply absolute left-2 h-5 w-5;
+    }
+
+    & input {
+      @apply w-full bg-transparent py-2 sm:pr-10 pl-10 text-base text-gray-200 placeholder-light-200 outline-hidden;
+    }
+  }
+
+  @keyframes float-art {
+    0%, 100% { transform: translateY(0) rotate(-4deg); }
+    50% { transform: translateY(-12px) rotate(-1deg); }
+  }
+
+  @keyframes pulse-dot {
+    0%, 100% { opacity: 0.55; transform: scale(0.85); }
+    50% { opacity: 1; transform: scale(1.15); }
+  }
+
+  @media (max-width: 640px) {
+    .hero-copy { @apply mt-10 gap-14; }
+    .hero-art { @apply max-w-[280px]; }
+    .hero-message h1 { @apply text-[3.2rem]; }
+  }
+
+  .all-movies {
+    @apply space-y-9;
+
+    & ul {
+      @apply grid grid-cols-1 gap-5 xs:grid-cols-2 md:grid-cols-3 lg:grid-cols-4;
+    }
+  }
+
+  .movie-card {
+    @apply bg-dark-100 p-5 rounded-2xl shadow-inner shadow-light-100/10;
+
+    & img {
+      @apply rounded-lg h-auto w-full;
+    }
+
+    & h3 {
+      @apply text-white font-bold text-base line-clamp-1;
+    }
+
+    & .content {
+      @apply mt-2 flex flex-row items-center flex-wrap gap-2;
+    }
+
+    & .rating {
+      @apply flex flex-row items-center gap-1;
+    }
+
+    & .rating img {
+      @apply size-4 object-contain;
+    }
+
+    & .rating p {
+      @apply font-bold text-base text-white;
+    }
+
+    & .content span {
+      @apply text-sm text-gray-100;
+    }
+
+    & .content .lang {
+      @apply capitalize text-gray-100 font-medium text-base;
+    }
+
+    & .content .year {
+      @apply text-gray-100 font-medium text-base;
+    }
+  }
+}
+
+@utility text-gradient {
+  @apply bg-linear-to-r from-[#D6C7FF] to-[#AB8BFF] bg-clip-text text-transparent;
+}
+
+@utility fancy-text {
+  -webkit-text-stroke: 5px rgba(206, 206, 251, 0.5);
+  font-size: 190px;
+  font-family: "Bebas Neue", sans-serif;
+}
+
+@utility hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
