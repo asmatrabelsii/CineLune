@@ -34,6 +34,10 @@ const App = () => {
     setErrorMessage("");
 
     try {
+      if (!API_KEY) {
+        throw new Error("Missing VITE_TMDB_API_KEY environment variable");
+      }
+
       const endpoint = query
         ? `${API_BASE_URL}/search/movie?query=${encodeURIComponent(query)}`
         : `${API_BASE_URL}/discover/movie?sort_by=popularity.desc`;
@@ -41,7 +45,7 @@ const App = () => {
       const response = await fetch(endpoint, API_OPTIONS);
 
       if (!response.ok) {
-        throw new Error("Failed to fetch movies");
+        throw new Error(`TMDB request failed with status ${response.status}`);
       }
 
       const data = await response.json();
@@ -59,7 +63,11 @@ const App = () => {
       }
     } catch (error) {
       console.error("Error fetching movies:", error);
-      setErrorMessage("Failed to fetch movies. Please try again later.");
+      setErrorMessage(
+        error.message.includes("VITE_TMDB_API_KEY")
+          ? "Movie search is not configured. Add VITE_TMDB_API_KEY to the Vercel environment variables and redeploy."
+          : "Failed to fetch movies. Please try again later."
+      );
     } finally {
       setisLoading(false);
     }
