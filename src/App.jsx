@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import Search from "./components/Search";
 import Spinner from "./components/Spinner";
 import MovieCard from "./components/MovieCard";
+import RecommendationChat from "./components/RecommendationChat";
 import { useDebounce } from "react-use";
 import { getTrendingMovies, updateSearchCount } from "./appwrite";
 
@@ -24,12 +25,14 @@ const App = () => {
   const [movieList, setMovieList] = useState([]);
   const [errorMessage, setErrorMessage] = useState("");
   const [isLoading, setisLoading] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   
   const [trendingMovies, setTrendingMovies] = useState([]);
 
   useDebounce(() => setDebouncedSearchTerm(searchTerm), 500, [searchTerm]);
 
-  const fetchMovies = async (query = "") => {
+  const fetchMovies = async (query = "", page = 1) => {
     setisLoading(true);
     setErrorMessage("");
 
@@ -39,8 +42,8 @@ const App = () => {
       }
 
       const endpoint = query
-        ? `${API_BASE_URL}/search/movie?query=${encodeURIComponent(query)}`
-        : `${API_BASE_URL}/discover/movie?sort_by=popularity.desc`;
+        ? `${API_BASE_URL}/search/movie?query=${encodeURIComponent(query)}&page=${page}`
+        : `${API_BASE_URL}/discover/movie?sort_by=popularity.desc&page=${page}`;
 
       const response = await fetch(endpoint, API_OPTIONS);
 
@@ -56,10 +59,13 @@ const App = () => {
         return;
       }
 
-      setMovieList(data.results || []);
+      const results = data.results || [];
 
-      if (query && data.results.length > 0) {
-        await updateSearchCount(query, data.results[0]);
+      setMovieList(results);
+      setTotalPages(Math.min(data.total_pages || 1, 500));
+
+      if (query && results.length > 0) {
+        await updateSearchCount(query, results[0]);
       }
     } catch (error) {
       console.error("Error fetching movies:", error);
@@ -88,8 +94,18 @@ const App = () => {
   }, []);
 
   useEffect(() => {
-    fetchMovies(debouncedSearchTerm);
-  }, [debouncedSearchTerm]);
+    fetchMovies(debouncedSearchTerm, currentPage);
+  }, [debouncedSearchTerm, currentPage]);
+
+  const handleSearchTermChange = (value) => {
+    setSearchTerm(value);
+    setCurrentPage(1);
+  };
+
+  const goToPage = (page) => {
+    setCurrentPage(Math.max(1, Math.min(page, totalPages)));
+    window.scrollTo({ top: document.querySelector(".all-movies")?.offsetTop || 0, behavior: "smooth" });
+  };
 
   return (
     <main>
@@ -117,7 +133,7 @@ const App = () => {
                 worth staying up for.
               </h1>
               <p className="hero-description">From midnight classics to fresh releases, discover something that feels made for you.</p>
-              <Search searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+              <Search searchTerm={searchTerm} setSearchTerm={handleSearchTermChange} />
               <div className="hero-meta">
                 <span><b>01</b> Browse by mood</span>
                 <span><b>02</b> Find your story</span>
@@ -126,7 +142,7 @@ const App = () => {
           </div>
         </header>
 
-        {trendingMovies.length > 0 && (
+        {trendingMovies.length > 0 && !searchTerm.trim() && (
           <section className="trending">
             <h2>Trending Movies</h2>
 
@@ -155,8 +171,32 @@ const App = () => {
               ))}
             </ul>
           )}
+
+          {!isLoading && !errorMessage && totalPages > 1 && (
+            <nav className="pagination" aria-label="Movie pages">
+              <button
+                type="button"
+                onClick={() => goToPage(currentPage - 1)}
+                disabled={currentPage === 1}
+              >
+                Previous
+              </button>
+              <span aria-live="polite">
+                Page <strong>{currentPage}</strong> of <strong>{totalPages}</strong>
+              </span>
+              <button
+                type="button"
+                onClick={() => goToPage(currentPage + 1)}
+                disabled={currentPage === totalPages}
+              >
+                Next
+              </button>
+            </nav>
+          )}
         </section>
       </div>
+
+      <RecommendationChat movies={movieList} />
     </main>
   );
 };

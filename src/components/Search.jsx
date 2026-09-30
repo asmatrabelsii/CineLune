@@ -12,6 +12,17 @@ const Search = ({searchTerm, setSearchTerm}) => {
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
             />
+
+            {searchTerm && (
+              <button
+                className="search-clear"
+                type="button"
+                aria-label="Clear search"
+                onClick={() => setSearchTerm("")}
+              >
+                X
+              </button>
+            )}
         </div>
     </div>
   );
