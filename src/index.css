@@ -281,6 +281,83 @@
       @apply text-gray-100 font-medium text-base;
     }
   }
+
+  .movie-modal-backdrop {
+    @apply fixed inset-0 z-50 flex items-center justify-center bg-black/75 p-4 backdrop-blur-sm;
+  }
+
+  .movie-modal {
+    @apply relative grid max-h-[90vh] w-full max-w-3xl overflow-y-auto rounded-2xl border border-white/15 bg-[#100d24] shadow-[0_25px_90px_rgba(0,0,0,0.65)] sm:grid-cols-[220px_1fr];
+  }
+
+  .movie-modal-close {
+    @apply absolute right-3 top-3 z-10 flex h-9 w-9 items-center justify-center rounded-full bg-black/40 text-sm font-bold text-white transition-colors hover:bg-white/15 focus-visible:outline-2 focus-visible:outline-[#ffb86c];
+  }
+
+  .movie-modal-poster {
+    @apply min-h-72 bg-black/20 sm:min-h-full;
+  }
+
+  .movie-modal-poster img {
+    @apply h-full w-full object-cover;
+  }
+
+  .movie-modal-content {
+    @apply p-6 sm:p-8;
+  }
+
+  .movie-modal-kicker {
+    @apply text-[10px] font-bold uppercase tracking-[0.2em] text-[#ffb86c];
+  }
+
+  .movie-modal-content h2 {
+    @apply mt-2 pr-8 text-3xl font-black leading-tight text-white;
+  }
+
+  .movie-modal-meta {
+    @apply mt-4 flex flex-wrap gap-x-3 gap-y-1 text-sm font-bold capitalize text-light-200;
+  }
+
+  .movie-modal-meta span + span::before {
+    content: "•";
+    @apply mr-3 text-[#ffb86c];
+  }
+
+  .movie-modal-trailer {
+    @apply mt-5 inline-flex items-center gap-2 rounded-lg bg-[#ffb86c] px-4 py-2.5 text-sm font-black text-[#27142c] transition-transform hover:-translate-y-0.5 hover:bg-[#ffd18f] focus-visible:outline-2 focus-visible:outline-white;
+  }
+
+  .movie-modal-overview {
+    @apply text-sm leading-6 text-light-200;
+  }
+
+  .movie-modal-loading {
+    @apply mt-8 text-sm text-light-200;
+  }
+
+  .movie-modal-information {
+    @apply mt-7;
+  }
+
+  .movie-modal-row {
+    @apply grid grid-cols-[92px_1fr] gap-4 border-t border-white/10 py-3 text-xs sm:grid-cols-[118px_1fr];
+  }
+
+  .movie-modal-row dt {
+    @apply text-light-200/60;
+  }
+
+  .movie-modal-row dd {
+    @apply min-w-0 leading-5 text-white/90;
+  }
+
+  .movie-modal-overview-row {
+    @apply block pb-5;
+  }
+
+  .movie-modal-overview-row dd {
+    @apply mt-2;
+  }
 }
 
 @utility text-gradient {

@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import Search from "./components/Search";
 import Spinner from "./components/Spinner";
 import MovieCard from "./components/MovieCard";
+import MovieDetailsModal from "./components/MovieDetailsModal";
 import RecommendationChat from "./components/RecommendationChat";
 import { useDebounce } from "react-use";
 import { getTrendingMovies, updateSearchCount } from "./appwrite";
@@ -29,6 +30,7 @@ const App = () => {
   const [totalPages, setTotalPages] = useState(1);
   
   const [trendingMovies, setTrendingMovies] = useState([]);
+  const [selectedMovie, setSelectedMovie] = useState(null);
 
   useDebounce(() => setDebouncedSearchTerm(searchTerm), 500, [searchTerm]);
 
@@ -167,7 +169,7 @@ const App = () => {
           ) : (
             <ul>
               {movieList.map((movie) => (
-                <MovieCard key={movie.id} movie={movie} />
+                <MovieCard key={movie.id} movie={movie} onSelect={setSelectedMovie} />
               ))}
             </ul>
           )}
@@ -197,6 +199,13 @@ const App = () => {
       </div>
 
       <RecommendationChat movies={movieList} />
+      {selectedMovie && (
+        <MovieDetailsModal
+          key={selectedMovie.id}
+          movie={selectedMovie}
+          onClose={() => setSelectedMovie(null)}
+        />
+      )}
     </main>
   );
 };

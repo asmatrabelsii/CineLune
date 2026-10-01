@@ -1,10 +1,22 @@
-import React from "react";
+const MovieCard = ({ movie, onSelect }) => {
+  const { title, vote_average, poster_path, release_date, original_language, overview } = movie;
 
-const MovieCard = ({
-  movie: { title, vote_average, poster_path, release_date, original_language, overview },
-}) => {
+  const handleKeyDown = (event) => {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      onSelect(movie);
+    }
+  };
+
   return (
-    <div className="movie-card" tabIndex="0">
+    <div
+      className="movie-card"
+      onClick={() => onSelect(movie)}
+      onKeyDown={handleKeyDown}
+      role="button"
+      tabIndex="0"
+      aria-label={`View details for ${title}`}
+    >
       <div className="movie-card-poster">
         <img
           src={poster_path ? `https://image.tmdb.org/t/p/w500/${poster_path}` : "/no-movie.png" } alt={title}
