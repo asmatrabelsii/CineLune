@@ -52,7 +52,7 @@ const RecommendationChat = ({ movies }) => {
         score: getRecommendationScore(movie, terms, genreIds),
       }))
       .sort((first, second) => second.score - first.score)
-      .slice(0, 3)
+      .slice(0, 10)
       .map(({ movie }) => movie);
 
     return rankedMovies;
