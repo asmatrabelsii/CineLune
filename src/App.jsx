@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import Search from "./components/Search";
+import MovieFilters from "./components/MovieFilters";
 import Spinner from "./components/Spinner";
 import MovieCard from "./components/MovieCard";
 import MovieDetailsModal from "./components/MovieDetailsModal";
@@ -22,6 +23,14 @@ const API_OPTIONS = {
 const App = () => {
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
+  const [filters, setFilters] = useState({
+    genre: "",
+    country: "",
+    year: "",
+    rating: "",
+    language: "",
+    sort: "popularity.desc",
+  });
 
   const [movieList, setMovieList] = useState([]);
   const [errorMessage, setErrorMessage] = useState("");
@@ -34,7 +43,7 @@ const App = () => {
 
   useDebounce(() => setDebouncedSearchTerm(searchTerm), 500, [searchTerm]);
 
-  const fetchMovies = async (query = "", page = 1) => {
+  const fetchMovies = async (query = "", page = 1, filters = {}) => {
     setisLoading(true);
     setErrorMessage("");
 
@@ -43,9 +52,15 @@ const App = () => {
         throw new Error("Missing VITE_TMDB_API_KEY environment variable");
       }
 
+      const params = new URLSearchParams({ page: String(page) });
+
+      if (filters.country) params.set("region", filters.country);
+      if (filters.year) params.set("year", filters.year);
+      if (filters.language) params.set("language", filters.language);
+
       const endpoint = query
-        ? `${API_BASE_URL}/search/movie?query=${encodeURIComponent(query)}&page=${page}`
-        : `${API_BASE_URL}/discover/movie?sort_by=popularity.desc&page=${page}`;
+        ? `${API_BASE_URL}/search/movie?query=${encodeURIComponent(query)}&${params}`
+        : `${API_BASE_URL}/discover/movie?sort_by=${filters.sort}&${params}${filters.genre ? `&with_genres=${filters.genre}` : ""}${filters.country ? `&with_origin_country=${filters.country}` : ""}${filters.year ? `&primary_release_year=${filters.year}` : ""}${filters.rating ? `&vote_average.gte=${filters.rating}` : ""}`;
 
       const response = await fetch(endpoint, API_OPTIONS);
 
@@ -61,7 +76,16 @@ const App = () => {
         return;
       }
 
-      const results = data.results || [];
+      const results = (data.results || []).filter((movie) => {
+        const matchesGenre = !filters.genre || movie.genre_ids?.includes(Number(filters.genre));
+        const matchesCountry =
+          !filters.country || !movie.origin_country || movie.origin_country.includes(filters.country);
+        const matchesYear = !filters.year || movie.release_date?.startsWith(filters.year);
+        const matchesRating = !filters.rating || movie.vote_average >= Number(filters.rating);
+        const matchesLanguage = !filters.language || movie.original_language === filters.language;
+
+        return matchesGenre && matchesCountry && matchesYear && matchesRating && matchesLanguage;
+      });
 
       setMovieList(results);
       setTotalPages(Math.min(data.total_pages || 1, 500));
@@ -96,13 +120,39 @@ const App = () => {
   }, []);
 
   useEffect(() => {
-    fetchMovies(debouncedSearchTerm, currentPage);
-  }, [debouncedSearchTerm, currentPage]);
+    fetchMovies(debouncedSearchTerm, currentPage, filters);
+  }, [debouncedSearchTerm, currentPage, filters]);
 
   const handleSearchTermChange = (value) => {
     setSearchTerm(value);
     setCurrentPage(1);
   };
+
+  const handleFilterChange = (name, value) => {
+    setFilters((currentFilters) => ({ ...currentFilters, [name]: value }));
+    setCurrentPage(1);
+  };
+
+  const clearFilters = () => {
+    setFilters({
+      genre: "",
+      country: "",
+      year: "",
+      rating: "",
+      language: "",
+      sort: "popularity.desc",
+    });
+    setCurrentPage(1);
+  };
+
+  const hasActiveFilters = Boolean(
+    searchTerm.trim() ||
+    filters.genre ||
+    filters.country ||
+    filters.year ||
+    filters.rating ||
+    filters.language,
+  );
 
   const goToPage = (page) => {
     setCurrentPage(Math.max(1, Math.min(page, totalPages)));
@@ -136,6 +186,11 @@ const App = () => {
               </h1>
               <p className="hero-description">From midnight classics to fresh releases, discover something that feels made for you.</p>
               <Search searchTerm={searchTerm} setSearchTerm={handleSearchTermChange} />
+              <MovieFilters
+                filters={filters}
+                onChange={handleFilterChange}
+                onClear={clearFilters}
+              />
               <div className="hero-meta">
                 <span><b>01</b> Browse by mood</span>
                 <span><b>02</b> Find your story</span>
@@ -144,7 +199,7 @@ const App = () => {
           </div>
         </header>
 
-        {trendingMovies.length > 0 && !searchTerm.trim() && (
+        {trendingMovies.length > 0 && !hasActiveFilters && (
           <section className="trending">
             <h2>Trending Movies</h2>
 

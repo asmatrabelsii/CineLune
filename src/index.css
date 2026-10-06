@@ -69,6 +69,10 @@
   .hero-description { @apply mt-6 max-w-lg text-base leading-7 text-light-200 sm:text-lg; }
   .hero-message .search { @apply mx-0 mt-8 max-w-xl border border-white/10 bg-white/10 p-2 pl-4 shadow-[0_14px_40px_rgba(0,0,0,0.25)] backdrop-blur-md transition-colors focus-within:border-[#ffb86c]/70; }
   .hero-message .search input { @apply py-3; }
+  .movie-filters { @apply mt-3 flex max-w-xl flex-wrap items-end gap-3; }
+  .movie-filters label { @apply flex min-w-36 flex-1 flex-col gap-1.5 text-[10px] font-bold uppercase tracking-[0.16em] text-white/50; }
+  .movie-filters select { @apply w-full rounded-lg border border-white/10 bg-[#100d24] px-3 py-2.5 text-sm font-medium normal-case tracking-normal text-white outline-none transition-colors focus:border-[#ffb86c]/70; }
+  .clear-filters { @apply mb-0.5 rounded-lg border border-white/15 px-3 py-2.5 text-xs font-bold text-light-200 transition-colors hover:border-[#ffb86c]/70 hover:text-white focus-visible:outline-2 focus-visible:outline-[#ffb86c]; }
   .hero-meta { @apply mt-5 flex flex-wrap gap-x-6 gap-y-2 text-xs font-medium uppercase tracking-wider text-white/45; }
   .hero-meta b { @apply mr-2 text-[#ffb86c]; }
 
